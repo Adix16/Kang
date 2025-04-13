@@ -45,8 +45,8 @@ prepare_env() {
   export PATH=$CUR_DIR/build/clang/bin:$PATH
   export ARCH=arm64
   export SUBARCH=arm64
-  export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-pexcn}
-  export KBUILD_BUILD_HOST=buildbot
+  export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-aryan}
+  export KBUILD_BUILD_HOST=stormvault
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
   export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
 }
