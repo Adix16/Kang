@@ -1,5 +1,5 @@
 KERNEL_SOURCE=https://github.com/Matrixx-Devices/android_kernel_xiaomi_pipa.git
-KERNEL_COMMIT=e3073427497fcafd3a808ee409e0f7341d664e8f
+KERNEL_COMMIT=26188f69e9f4736224638e6c356cd54151071287
 KERNEL_CONFIG=pipa_aosp_defconfig
 
 DONT_PATCH_KERNELSU=true
