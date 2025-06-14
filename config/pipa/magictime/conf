@@ -1,5 +1,0 @@
-KERNEL_SOURCE=https://github.com/CuriousNom/kernel_xiaomi_sm8250
-KERNEL_COMMIT=46425fd096e0578f0f255d8127f686f05d5564f2
-
-# this device have vendor_boot partition
-HAVE_VENDOR_BOOT=true

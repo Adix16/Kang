@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - '.github/workflows/pipa.yml'
-      - 'config/pipa/**'
       - 'build.sh'
   workflow_dispatch:
     inputs:
@@ -30,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG:
-          - bloodreaper
+          - Magictime
 
     steps:
       - name: Checkout sources
@@ -53,11 +52,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel
-          path: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel.zip
+          path: build/*.zip
 
       - name: Upload to Releases
         if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || github.event.inputs.upload_release == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.DEVICE_CODENAME }}
-          files: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel.zip
+          files: build/*.zip
