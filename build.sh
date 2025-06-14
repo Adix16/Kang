@@ -68,18 +68,29 @@ get_sources() {
 
 
 remove_kernelsu() {
-    # Navigate to drivers directory in kernel source
-    cd build/kernel/drivers || {
-        echo "Error: Could not find build/kernel/drivers directory"
+    # Navigate to kernel source root first
+    cd build/kernel || {
+        echo "Error: Could not find build/kernel directory"
         return 1
     }
+
+    # --- Remove KernelSU from drivers ---
+    echo "Processing drivers directory..."
+    cd drivers || {
+        echo "Error: Could not find drivers directory"
+        return 1
+    }
+
+    # Show files before deletion (for debugging)
+    if [ -d "kernelsu" ]; then
+        echo "Found KernelSU with these files:"
+        ls -l kernelsu/
+    fi
 
     # Remove KernelSU directory if it exists
     if [ -d "kernelsu" ]; then
         echo "Removing KernelSU directory..."
         rm -rf kernelsu
-    else
-        echo "KernelSU directory not found, skipping removal"
     fi
 
     # Remove KernelSU from Kconfig
@@ -87,11 +98,7 @@ remove_kernelsu() {
         if grep -q 'source "drivers/kernelsu/Kconfig"' Kconfig; then
             echo "Removing KernelSU from drivers/Kconfig..."
             sed -i '/source "drivers\/kernelsu\/Kconfig"/d' Kconfig
-        else
-            echo "KernelSU reference not found in drivers/Kconfig"
         fi
-    else
-        echo "Warning: drivers/Kconfig not found"
     fi
 
     # Remove KernelSU from Makefile
@@ -99,19 +106,36 @@ remove_kernelsu() {
         if grep -q 'obj-$(CONFIG_KSU) += kernelsu/' Makefile; then
             echo "Removing KernelSU from drivers/Makefile..."
             sed -i '/obj-$(CONFIG_KSU) += kernelsu\//d' Makefile
-        else
-            echo "KernelSU reference not found in drivers/Makefile"
         fi
-    else
-        echo "Warning: drivers/Makefile not found"
     fi
 
-    cat Kconfig                            
-    cat Makefile
+    # Verify drivers deletion
+    if [ ! -d "kernelsu" ]; then
+        echo "KernelSU drivers removal successful"
+    else
+        echo "Warning: KernelSU drivers directory still exists!"
+        return 1
+    fi
 
-    # Return to original directory
+    cd ..
+
+    # --- Remove KernelSU references from devpts ---
+    echo "Processing devpts files..."
+    if [ -f "fs/devpts/inode.c" ]; then
+        echo "Removing KernelSU references from fs/devpts/inode.c"
+        sed -i '/extern int ksu_handle_devpts(struct inode\*);/d' fs/devpts/inode.c
+        sed -i '/ksu_handle_devpts(dentry->d_inode);/d' fs/devpts/inode.c
+        
+        # Verify removal
+        if grep -qE 'ksu_handle_devpts|extern int ksu_handle_devpts' fs/devpts/inode.c; then
+            echo "Warning: Failed to remove all KernelSU references from fs/devpts/inode.c"
+            return 1
+        fi
+    else
+        echo "Warning: fs/devpts/inode.c not found"
+    fi
+
     cd - >/dev/null
-
 }
 
 build_kernel() {
