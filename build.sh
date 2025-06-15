@@ -141,7 +141,7 @@ remove_kernelsu() {
 build_kernel() {
   cd build/kernel
 
-  make "${MAKE_FLAGS[@]}" vendor/kona-perf_defconfig vendor/xiaomi/sm8250-common.config vendor/debugfs.config vendor/xiaomi/pipa.config
+  make "${MAKE_FLAGS[@]}" vendor/kona-perf_defconfig vendor/xiaomi/sm8250-common.config vendor/xiaomi/pipa.config #vendor/debugfs.config
   
   # compile kernel with error logging
   make "${MAKE_FLAGS[@]}" -j$(nproc --all) 2> >(tee -a error.log >&2) || exit 3
