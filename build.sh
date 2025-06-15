@@ -177,6 +177,6 @@ package_kernel() {
 
 prepare_env
 get_sources
-#remove_kernelsu
+remove_kernelsu
 build_kernel
 package_kernel
